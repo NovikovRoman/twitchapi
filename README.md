@@ -40,6 +40,8 @@ if (!empty($_GET['code'])) {
     }
 
 } else {
-    $am->signin($state,true);
+    $am->signin($state, true);
+    // optional
+    // $am->signin($state, true, ['force_verify' => true]);
 }
 ```
