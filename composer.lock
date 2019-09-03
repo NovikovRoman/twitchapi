@@ -241,16 +241,16 @@
         },
         {
             "name": "noroman/authmanager",
-            "version": "v1.0.0",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NovikovRoman/authmanager.git",
-                "reference": "7b7a0bcb30eb995b2c65f3bd2b6ffaa2721641f0"
+                "reference": "15f35939a899f3f5b69955af1ff7b1d7b0600610"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NovikovRoman/authmanager/zipball/7b7a0bcb30eb995b2c65f3bd2b6ffaa2721641f0",
-                "reference": "7b7a0bcb30eb995b2c65f3bd2b6ffaa2721641f0",
+                "url": "https://api.github.com/repos/NovikovRoman/authmanager/zipball/15f35939a899f3f5b69955af1ff7b1d7b0600610",
+                "reference": "15f35939a899f3f5b69955af1ff7b1d7b0600610",
                 "shasum": ""
             },
             "require": {
@@ -275,7 +275,7 @@
                 }
             ],
             "description": "Auth Manager",
-            "time": "2019-08-30T11:15:37+00:00"
+            "time": "2019-09-03T14:22:16+00:00"
         },
         {
             "name": "psr/http-message",
