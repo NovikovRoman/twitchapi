@@ -3,7 +3,6 @@
 namespace TwitchAPI;
 
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\GuzzleException;
 
 class Users
 {
@@ -22,7 +21,6 @@ class Users
      * @param $fromID
      * @param $toID
      * @return array
-     * @throws GuzzleException
      */
     public function follows($after, $first, $fromID, $toID)
     {
@@ -45,7 +43,6 @@ class Users
     /**
      * @param array $ids
      * @return array
-     * @throws GuzzleException
      */
     public function getID(array $ids = [])
     {
@@ -59,7 +56,6 @@ class Users
     /**
      * @param array $logins
      * @return array
-     * @throws GuzzleException
      */
     public function getLogin(array $logins = [])
     {

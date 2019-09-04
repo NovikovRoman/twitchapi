@@ -3,7 +3,6 @@
 namespace TwitchAPI;
 
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\GuzzleException;
 
 class Videos
 {
@@ -20,7 +19,6 @@ class Videos
     /**
      * @param array $ids
      * @return array
-     * @throws GuzzleException
      */
     public function getID(array $ids = [])
     {
@@ -35,7 +33,6 @@ class Videos
      * @param $id
      * @param array $filter
      * @return array
-     * @throws GuzzleException
      */
     public function getUserID($id, $filter = [])
     {
@@ -50,7 +47,6 @@ class Videos
      * @param $id
      * @param array $filter
      * @return array
-     * @throws GuzzleException
      */
     public function getGameID($id, $filter = [])
     {

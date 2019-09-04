@@ -6,12 +6,13 @@ use AuthManager\OAuthClientInterface;
 use AuthManager\OAuthTokenInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\RequestException;
 
 class Client implements OAuthClientInterface
 {
     const baseUrl = 'https://api.twitch.tv/helix';
     const tokenUrl = 'https://id.twitch.tv/oauth2/token';
-    const authorizeUrl = 'https://api.twitch.tv/kraken/oauth2/authorize';
+    const authorizeUrl = 'https://id.twitch.tv/oauth2/authorize';
 
     private $id;
     private $secret;
@@ -74,7 +75,7 @@ class Client implements OAuthClientInterface
 
     public function getAuthHeaders(): array
     {
-        $a = $this->getToken()->getTokenType() . ' ' . $this->getToken()->getAccessToken();
+        $a = ucfirst($this->getToken()->getTokenType()) . ' ' . $this->getToken()->getAccessToken();
         return [
             'Authorization' => $a,
             'Client-ID' => $this->getClientID(),
@@ -86,7 +87,6 @@ class Client implements OAuthClientInterface
      * @param $params
      * @param array $headers
      * @return array
-     * @throws GuzzleException
      */
     public function requestPost($path, $params, $headers = [])
     {
@@ -96,8 +96,34 @@ class Client implements OAuthClientInterface
             'body' => http_build_query($params),
         ];
         $params['headers'] = array_merge($params['headers'], $this->getAuthHeaders());
-        $response = $this->httpClient->request('POST', self::baseUrl . $path, $params);
-        return json_decode($response->getBody()->getContents(), true);
+
+        try {
+            $content = $this->httpClient->request(
+                'POST',
+                self::baseUrl . $path,
+                $params
+            )->getBody()->getContents();
+            $resp = json_decode($content, true);
+
+        } catch (RequestException $e) {
+            $resp = json_decode($e->getResponse()->getBody()->getContents(), true);
+            if (!$resp) {
+                return [
+                    'error' => $e->getResponse()->getReasonPhrase(),
+                    'status' => $e->getResponse()->getStatusCode(),
+                    'message' => $e->getMessage(),
+                ];
+            }
+
+        } catch (GuzzleException $e) {
+            return [
+                'error' => 'Internal Server Error',
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        return $resp;
     }
 
     /**
@@ -105,16 +131,36 @@ class Client implements OAuthClientInterface
      * @param array|string $query
      * @param array $headers
      * @return array
-     * @throws GuzzleException
      */
     public function requestGet($path, $query = [], $headers = [])
     {
         $url = self::baseUrl . $path . (empty($query) ? '' : '?');
         $url .= is_array($query) ? http_build_query($query) : $query;
 
-        $response = $this->httpClient->request('GET', $url, [
-            'headers' => array_merge($headers, $this->getAuthHeaders()),
-        ]);
-        return json_decode($response->getBody()->getContents(), true);
+        try {
+            $content = $this->httpClient->request('GET', $url, [
+                'headers' => array_merge($headers, $this->getAuthHeaders()),
+            ])->getBody()->getContents();
+            $resp = json_decode($content, true);
+
+        } catch (RequestException $e) {
+            $resp = json_decode($e->getResponse()->getBody()->getContents(), true);
+            if (!$resp) {
+                return [
+                    'error' => $e->getResponse()->getReasonPhrase(),
+                    'status' => $e->getResponse()->getStatusCode(),
+                    'message' => $e->getMessage(),
+                ];
+            }
+
+        } catch (GuzzleException $e) {
+            return [
+                'error' => 'Internal Server Error',
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ];
+        }
+
+        return $resp;
     }
 }
