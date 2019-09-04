@@ -38,7 +38,7 @@ class Videos
     {
         $query = 'user_id=' . $id;
         if (!empty($filter)) {
-            $query .= http_build_query($filter);
+            $query .= '&' . http_build_query($filter);
         }
         return $this->client->requestGet('/videos', $query);
     }
@@ -52,7 +52,7 @@ class Videos
     {
         $query = 'game_id=' . $id;
         if (!empty($filter)) {
-            $query .= http_build_query($filter);
+            $query .= '&' . http_build_query($filter);
         }
         return $this->client->requestGet('/videos', $query);
     }
