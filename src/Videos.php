@@ -26,7 +26,7 @@ class Videos
         if (!empty($ids)) {
             $query = 'id=' . implode('&id=', $ids);
         }
-        return $this->client->requestGet('/videos', $query);
+        return $this->client->requestGetClient('/videos', $query);
     }
 
     /**
@@ -40,7 +40,7 @@ class Videos
         if (!empty($filter)) {
             $query .= '&' . http_build_query($filter);
         }
-        return $this->client->requestGet('/videos', $query);
+        return $this->client->requestGetClient('/videos', $query);
     }
 
     /**
@@ -54,6 +54,6 @@ class Videos
         if (!empty($filter)) {
             $query .= '&' . http_build_query($filter);
         }
-        return $this->client->requestGet('/videos', $query);
+        return $this->client->requestGetClient('/videos', $query);
     }
 }

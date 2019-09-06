@@ -73,30 +73,39 @@ class Client implements OAuthClientInterface
         return $this->token;
     }
 
-    public function getAuthHeaders(): array
+    public function requestPostAuth($path, $params, $headers = [])
     {
-        $a = ucfirst($this->getToken()->getTokenType()) . ' ' . $this->getToken()->getAccessToken();
-        return [
-            'Authorization' => $a,
-            'Client-ID' => $this->getClientID(),
-        ];
+        $params = $this->addParams($params, $headers);
+        $params['headers'] = array_merge($params['headers'], $this->getAuthHeaders());
+        return $this->requestPost($path, $params);
+    }
+
+    public function requestPostClient($path, $params, $headers = [])
+    {
+        $params = $this->addParams($params, $headers);
+        $params['headers'] = array_merge($params['headers'], $this->getClientHeaders());
+        return $this->requestPost($path, $params);
+    }
+
+    public function requestGetAuth($path, $params, $headers = [])
+    {
+        $headers = array_merge($headers, $this->getAuthHeaders());
+        return $this->requestGet($path, $params, $headers);
+    }
+
+    public function requestGetClient($path, $params, $headers = [])
+    {
+        $headers = array_merge($headers, $this->getClientHeaders());
+        return $this->requestGet($path, $params, $headers);
     }
 
     /**
      * @param $path
      * @param $params
-     * @param array $headers
      * @return array
      */
-    public function requestPost($path, $params, $headers = [])
+    private function requestPost($path, $params)
     {
-        $params = [
-            'verify' => false,
-            'headers' => $headers,
-            'body' => http_build_query($params),
-        ];
-        $params['headers'] = array_merge($params['headers'], $this->getAuthHeaders());
-
         try {
             $content = $this->httpClient->request(
                 'POST',
@@ -132,14 +141,14 @@ class Client implements OAuthClientInterface
      * @param array $headers
      * @return array
      */
-    public function requestGet($path, $query = [], $headers = [])
+    private function requestGet($path, $query = [], $headers = [])
     {
         $url = self::baseUrl . $path . (empty($query) ? '' : '?');
         $url .= is_array($query) ? http_build_query($query) : $query;
 
         try {
             $content = $this->httpClient->request('GET', $url, [
-                'headers' => array_merge($headers, $this->getAuthHeaders()),
+                'headers' => $headers,
             ])->getBody()->getContents();
             $resp = json_decode($content, true);
 
@@ -162,5 +171,30 @@ class Client implements OAuthClientInterface
         }
 
         return $resp;
+    }
+
+    private function getAuthHeaders(): array
+    {
+        return [
+            'Authorization' => ucfirst($this->getToken()->getTokenType())
+                . ' ' . $this->getToken()->getAccessToken(),
+        ];
+    }
+
+    private function getClientHeaders(): array
+    {
+        return [
+            'Client-ID' => $this->getClientID(),
+        ];
+    }
+
+    private function addParams($params, $headers)
+    {
+        $params = [
+            'verify' => false,
+            'headers' => $headers,
+            'body' => http_build_query($params),
+        ];
+        return $params;
     }
 }

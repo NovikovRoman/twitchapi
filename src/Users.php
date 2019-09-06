@@ -37,7 +37,7 @@ class Users
         if ($toID) {
             $query['to_id'] = $toID;
         }
-        return $this->client->requestGet('/users/follows', $query);
+        return $this->client->requestGetClient('/users/follows', $query);
     }
 
     /**
@@ -50,7 +50,7 @@ class Users
         if (!empty($ids)) {
             $query = 'id=' . implode('&id=', $ids);
         }
-        return $this->client->requestGet('/users', $query);
+        return $this->client->requestGetAuth('/users', $query);
     }
 
     /**
@@ -63,6 +63,6 @@ class Users
         if (!empty($logins)) {
             $query = 'login=' . implode('&login=', $logins);
         }
-        return $this->client->requestGet('/users', $query);
+        return $this->client->requestGetAuth('/users', $query);
     }
 }
