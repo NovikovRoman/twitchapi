@@ -23,7 +23,7 @@ class Client implements OAuthClientInterface
     /** @var HttpClient */
     private $httpClient;
 
-    public function __construct($id, $secret, $scope = [], $redirectUri = 'https://localhost.me')
+    public function __construct(string $id, string $secret, array $scope = [], string $redirectUri = 'https://localhost.me')
     {
         $this->id = $id;
         $this->secret = $secret;
